@@ -1,0 +1,204 @@
+//================================================
+//                     APIs
+//================================================
+
+//API stands for Application Programming Interface
+//API is basically a software intermediary that allows two applications to talk to each other
+//in other words, an API is a messenger that takes a request and tells the system what you want to do and then returns the response back to you
+
+
+
+
+
+=======================================================
+// 1. Fetch API
+=======================================================
+
+
+
+
+
+[GET DATA ] ----------------------------------------------------------------------
+
+//this is how we get the data from the api
+fetch('https://reqres.in/api/users')
+    .then(response => response.json())
+    .then(data=>{
+        console.log(data.data[1].first_name);
+    })
+
+
+//[now error handling] -------------------------------------------------------------
+
+// NOTE: if the https status code is 200 then it means everything is ok ( ok: true)
+// if the https status code is 404 then it means the resource is not found ( ok: false)
+
+
+//basically there's two things that can go wrong while fetching data from api
+
+//1. there could be a network error
+// in the above case we can use catch block to handle the error
+
+fetch('https://reqres.in/api/users')
+    .then(response => response.json())
+    .then(data=>{
+        console.log(data.data[1].first_name);
+    })
+    .catch(error => console.log(error)); // this will catch the network error
+
+
+//2. the second error is if we access a url that doesn't exist( basically a resource that does not present) / 404 error
+// in this case we can use if statement to handle the error
+
+fetch('https://reqres.in/api/users')
+    .then( response => {
+
+        // the below if block code for checking the status of the response is also called "Guard Clause"
+        if (!res.ok){
+            console.log('Problem');
+            return;
+        }
+
+        return response.json()
+    })
+    .then(data=>{
+        console.log(data.data[1].first_name);
+    })
+    .catch(error => console.log(error)); // this will catch the network error
+
+
+- - - 
+
+
+//[POST DATA] -----------------------------------------------------------------------
+
+//this is how we post data to the api  
+
+const newUser = {
+    name: 'John Doe',
+    username: 'johndoe',
+    email: 'JD@gmail.com',
+}
+
+
+fetch('https://reqres.in/api/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newUser)
+    })
+    .then( response => {
+
+        if (!res.ok){
+            console.log('Problem');
+            return;
+        }
+
+        return response.json()
+    })
+    .then(data=>{
+        console.log('Success');
+    })
+    .catch(error => console.log(error)); 
+
+
+//==============================================================================================
+//                          We're taking example using a button click
+//==============================================================================================
+
+// With modern JavaScript we can use async await to fetch data from api
+
+//Normal way with .then() method
+
+//-------------------------------------------index.js----------------------------------------------------------
+
+//-------------------------------------
+// Normal implementation using .then()
+//-------------------------------------
+
+
+const btn = document.querySelector('#btn');
+
+const clickHandler = () => {
+    fetch('https://reqres.in/api/users')
+    .then(response => {
+        //for status 404 error
+        //(GUARD CLAUSE)
+        if(!response.ok){
+            console.log('Error');
+            return;
+        }
+        return response.json();
+    })
+    .then(data=>{
+       console.log(data.data[3].first_name);
+    })
+    .catch(error => {
+        // for network issues
+        console.log(error)
+    });
+};
+
+btn.addEventListener('click', clickHandler);
+
+//------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------index.js----------------------------------------------------------
+
+//-------------------------------------
+// Modern Way using async await
+//--------------------------------------
+
+const btn = document.querySelector('#btn');
+
+const clickHandler = async () => {
+    const res = await fetch('https://reqres.in/api/users');
+    const data = await res.json();
+    console.log(data.data[3].first_name);
+    
+};
+
+btn.addEventListener('click', clickHandler);
+
+// You see how much cleaner the code is with async await.
+// the code is much more readable and understandable.
+// it works the same way as it works with .then() method just the syntax is different,
+// that's why people prefer async await over .then() method and also called it "syntactic sugar".
+
+
+// ERROR HANDLING WITH ASYNC AWAIT
+
+const btn = document.querySelector('#btn');
+
+const clickHandler = async () => {
+
+    // for error handeling we use try and catch block
+
+    try{
+        const res = await fetch('https://reqres.in/api/users');
+        const data = await res.json();
+        if(!res.ok){
+            console.log('Problem with the resource');
+            return;
+        }
+        console.log(data.data[3].first_name);
+    }
+    catch(err){
+        console.log(err);
+    }
+    
+};
+
+btn.addEventListener('click', clickHandler);
+
+//NOTE: we write the if(!res.ok) condition after the await res.json() because we want to check the status of the response after we get the data from the api, maybe server sent any description about the error in the response body, so we want to check that first and then we want to check the status of the response.
+
+//--------------------------------------------------------------------------------------------------------------
+
+
+- - - 
+
+
+//[POST DATA] --------------------------------------------------------------------------------------------------
+
